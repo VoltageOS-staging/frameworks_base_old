@@ -815,6 +815,11 @@ public class DisplayPolicy {
     }
 
 
+    public int getTopFullscreenOpaqueWindowStatePrivateFlags() {
+        return mTopFullscreenOpaqueWindowState != null ?
+                mTopFullscreenOpaqueWindowState.getAttrs().privateFlags : 0;
+    }
+
     boolean isRemoteInsetsControllerControllingSystemBars() {
         return mRemoteInsetsControllerControlsSystemBars;
     }
