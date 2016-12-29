@@ -6430,6 +6430,12 @@ public final class Settings {
          */
         public static final String NAVIGATION_BAR_HINT = "navigation_bar_hint";
 
+	/**
+         * media artwork wallpaper blur level on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_MEDIA_BLUR = "lockscreen_media_blur";
+
         /**
          * Gesture navbar length mode.
          * Supported modes: 0 for short length, 1 for normal and 2 for long.
