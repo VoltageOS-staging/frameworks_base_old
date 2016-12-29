@@ -6446,6 +6446,12 @@ public final class Settings {
          */
         public static final String GESTURE_NAVBAR_RADIUS = "gesture_navbar_radius";
 
+	/**
+         * media artwork wallpaper blur level on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_MEDIA_BLUR = "lockscreen_media_blur";
+
         /**
          * Show app volume rows in volume panel
          * @hide
