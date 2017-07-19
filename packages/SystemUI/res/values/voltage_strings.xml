@@ -16,6 +16,7 @@
     <string name="status_bar_data_saver">Data saver</string>
     <string name="status_bar_vpn">VPN</string>
     <string name="status_bar_roaming">Roaming indicator</string>
+    <string name="status_bar_ims">VoLTE/VoWiFi</string>
 
     <!-- Anti flicker QS tile -->
     <string name="quick_settings_anti_flicker">Anti flicker</string>
