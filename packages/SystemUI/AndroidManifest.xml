@@ -361,6 +361,10 @@
     <protected-broadcast android:name="com.android.systemui.action.ACTION_LAUNCH_MEDIA_OUTPUT_BROADCAST_DIALOG" />
     <protected-broadcast android:name="com.android.systemui.STARTED" />
 
+    <!-- Lineage permissions-->
+    <uses-permission android:name="lineageos.permission.MANAGE_LIVEDISPLAY" />
+    <uses-permission android:name="lineageos.permission.HARDWARE_ABSTRACTION_ACCESS" />
+
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"
