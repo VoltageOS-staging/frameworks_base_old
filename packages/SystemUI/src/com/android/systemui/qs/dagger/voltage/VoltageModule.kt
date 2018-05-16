@@ -17,6 +17,7 @@
 package com.android.systemui.qs.dagger.voltage
 
 import com.android.systemui.qs.tileimpl.QSTileImpl
+import com.android.systemui.qs.tiles.ReadingModeTile
 
 import dagger.Binds
 import dagger.Module
@@ -26,4 +27,9 @@ import dagger.multibindings.StringKey
 @Module
 interface VoltageModule {
 
+    /** Inject ReadingModeTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(ReadingModeTile.TILE_SPEC)
+    fun bindReadingModeTile(readingModeTile: ReadingModeTile): QSTileImpl<*>
 }
