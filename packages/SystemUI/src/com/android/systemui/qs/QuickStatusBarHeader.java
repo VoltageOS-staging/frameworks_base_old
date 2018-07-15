@@ -192,6 +192,7 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
         updateResources();
 
         Dependency.get(TunerService.class).addTunable(this,
+		StatusBarIconController.ICON_HIDE_LIST,
                 STATUS_BAR_BATTERY_STYLE,
                 QS_BATTERY_STYLE,
                 QS_SHOW_BATTERY_PERCENT);
@@ -629,6 +630,7 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
         mStatusIconsView.setScrollY(scrollY);
         mDatePrivacyView.setScrollY(scrollY);
     }
+<<<<<<< HEAD
     private void updateBatteryStyle() {
         int style;
         if (mQSBatteryStyle == -1) {
@@ -642,6 +644,9 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
 
     @Override
     public void onTuningChanged(String key, String newValue) {
+        mClockView.setClockVisibleByUser(!StatusBarIconController.getIconHideList(
+                mContext, newValue).contains("clock"));
+    }
         switch (key) {
             case QS_BATTERY_STYLE:
                 mQSBatteryStyle =
