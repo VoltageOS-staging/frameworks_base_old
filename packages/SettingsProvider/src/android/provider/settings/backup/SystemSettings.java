@@ -100,5 +100,6 @@ public class SystemSettings {
         Settings.System.VOLUME_BUTTON_MUSIC_CONTROL,
         Settings.System.BACK_GESTURE_HAPTIC,
         Settings.System.OMNIJAWS_WEATHER_ICON_PACK,
+        Settings.System.OMNI_LOCKSCREEN_WEATHER_ENABLED,
     };
 }
