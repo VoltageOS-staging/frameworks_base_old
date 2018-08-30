@@ -99,5 +99,6 @@ public class SystemSettings {
         Settings.System.LOCKSCREEN_BATTERY_INFO,
         Settings.System.VOLUME_BUTTON_MUSIC_CONTROL,
         Settings.System.BACK_GESTURE_HAPTIC,
+        Settings.System.OMNIJAWS_WEATHER_ICON_PACK,
     };
 }
