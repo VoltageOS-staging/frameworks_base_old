@@ -1834,6 +1834,19 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces,
         mHeadsUpManager.releaseAllImmediately();
     }
 
+    public void toggleSettingsPanel() {
+        if (mPanelExpanded) {
+            mShadeController.animateCollapseShade();
+        } else {
+            animateExpandSettingsPanel(null);
+        }
+    }
+
+    @Override
+    public boolean isPanelExpanded() {
+        return mPanelExpanded;
+    }
+
     /**
      * Called when another window is about to transfer it's input focus.
      */
