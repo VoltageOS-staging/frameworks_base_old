@@ -17,6 +17,7 @@
 package com.android.systemui.qs.dagger.voltage
 
 import com.android.systemui.qs.tileimpl.QSTileImpl
+import com.android.systemui.qs.tiles.AntiFlickerTile
 import com.android.systemui.qs.tiles.ReadingModeTile
 
 import dagger.Binds
@@ -26,6 +27,12 @@ import dagger.multibindings.StringKey
 
 @Module
 interface VoltageModule {
+    /** Inject AntiFlickerTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(AntiFlickerTile.TILE_SPEC)
+    fun bindAntiFlickerTile(antiFlickerTile: AntiFlickerTile): QSTileImpl<*>
+
     /** Inject ReadingModeTile into tileMap in QSModule */
     @Binds
     @IntoMap
