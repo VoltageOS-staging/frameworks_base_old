@@ -17,6 +17,9 @@
     <string name="status_bar_vpn">VPN</string>
     <string name="status_bar_roaming">Roaming indicator</string>
 
+    <!-- Anti flicker QS tile -->
+    <string name="quick_settings_anti_flicker">Anti flicker</string>
+
     <!-- Reader mode QS tile -->
     <string name="quick_settings_reading_mode">Reading mode</string>
     <string name="accessibility_quick_settings_reading_mode_on">Reading mode on.</string>
