@@ -98,5 +98,6 @@ public class SystemSettings {
         Settings.System.TORCH_POWER_BUTTON_GESTURE,
         Settings.System.LOCKSCREEN_BATTERY_INFO,
         Settings.System.VOLUME_BUTTON_MUSIC_CONTROL,
+        Settings.System.BACK_GESTURE_HAPTIC,
     };
 }

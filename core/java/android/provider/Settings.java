@@ -5741,6 +5741,12 @@ public final class Settings {
         public static final String NAVIGATION_BAR_INVERSE = "navigation_bar_inverse";
 
         /**
+         * Enable haptic feedback for Back Gesture
+         * @hide
+         */
+        public static final String BACK_GESTURE_HAPTIC = "back_gesture_haptic";
+
+        /**
          * Switch between filters for lockscreen album art
          * @hide
          */
@@ -6316,6 +6322,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_FULL_COLOR);
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_REALLYFULL_COLOR);
             PRIVATE_SETTINGS.add(NAV_BAR_COMPACT_LAYOUT);
+            PRIVATE_SETTINGS.add(BACK_GESTURE_HAPTIC);
         }
 
         /**
