@@ -58,6 +58,9 @@
     <!-- Whether devices suports in-display fingerprint when screen is off -->
     <java-symbol type="bool" name="config_supportsScreenOffUdfps" />
 
+    <!-- Default UDFPS pressed icon -->
+    <java-symbol type="integer" name="config_udfps_pressed_color" />
+
     <!-- Advanced reboot -->
     <java-symbol type="string" name="reboot_to_recovery_title" />
     <java-symbol type="string" name="reboot_to_recovery_message" />

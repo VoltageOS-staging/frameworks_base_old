@@ -51,6 +51,9 @@
     <!-- Whether devices suports in-display fingerprint when screen is off -->
     <bool name="config_supportsScreenOffUdfps">false</bool>
 
+    <!-- Default UDFPS pressed color -->
+    <integer name="config_udfps_pressed_color">0</integer>
+
     <!-- Global Actions prefs list -->
     <string-array translatable="false" name="custom_config_globalActionsList">
         <item>emergency</item>

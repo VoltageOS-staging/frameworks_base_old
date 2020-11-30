@@ -6154,6 +6154,12 @@ public final class Settings {
          */
         public static final String UDFPS_ICON = "udfps_icon";
 
+        /**
+         * UDFPS pressed color
+         * @hide
+         */
+        public static final String UDFPS_COLOR = "udfps_color";
+
 	/**
          * QS battery style
          * @hide
