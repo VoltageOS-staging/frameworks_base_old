@@ -164,5 +164,8 @@
     <!-- List of system apps that are allowed to be locked with app lock.
           Use with extreme caution. -->
     <string-array name="config_appLockAllowedSystemApps" translatable="false" />
+	
+    <!-- Switch USB controller on Asus ROG devices-->
+    <bool name="config_switchUsbController">false</bool>	
 
 </resources>
