@@ -6277,6 +6277,35 @@ public final class Settings {
          */
         public static final String STATUS_BAR_BATTERY_TEXT_CHARGING = "status_bar_battery_text_charging";
 
+	/**
+         * @hide
+         */
+        public static final String OMNIJAWS_WEATHER_ICON_PACK = "omnijaws_weather_icon_pack";
+
+	/**
+         * Keyguard weather temperature
+         * 0: Hide the temperature
+         * 1: Display the temperature with scale and image
+         * 2: Display the temperature without scale and with image
+         * 3: Display the temparature with scale and without image
+         * 4: Display the temperature without scale and without image
+         * 5: Display the temperature image
+         * @hide
+         */
+	public static final String KG_SHOW_WEATHER_TEMP = "kg_show_weather_temp";
+
+	/**
+         * Launcher weather temperature
+         * 0: Hide the temperature
+         * 1: Display the temperature with scale and image
+         * 2: Display the temperature without scale and with image
+         * 3: Display the temparature with scale and without image
+         * 4: Display the temperature without scale and without image
+         * 5: Display the temperature image
+         * @hide
+         */
+	public static final String LAUNCHER_SHOW_WEATHER_TEMP = "launcher_show_weather_temp";
+
         /**
          * @hide
          */
@@ -6656,6 +6685,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(NAV_BAR_COMPACT_LAYOUT);
             PRIVATE_SETTINGS.add(LOCK_HIDE_STATUS_BAR);
             PRIVATE_SETTINGS.add(NAVIGATION_BAR_IME_SPACE);
+	    PRIVATE_SETTINGS.add(OMNIJAWS_WEATHER_ICON_PACK);
         }
 
         /**
