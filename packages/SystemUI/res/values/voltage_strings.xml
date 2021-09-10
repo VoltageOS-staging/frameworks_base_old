@@ -89,4 +89,10 @@
     <string name="accessibility_quick_settings_reading_mode_off">Reading mode off.</string>
     <string name="accessibility_quick_settings_reading_mode_changed_on">Reading mode turned on.</string>
     <string name="accessibility_quick_settings_reading_mode_changed_off">Reading mode turned off.</string>
+
+    <!-- Data usage info in QS footer -->
+    <string name="usage_data">used today</string>
+    <string name="usage_data_default_suffix">Data</string>
+    <string name="usage_wifi_default_suffix">Wi-Fi</string>
+
 </resources>
