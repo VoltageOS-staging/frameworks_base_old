@@ -5571,6 +5571,12 @@ public final class Settings {
         public static final String ENABLE_RIPPLE_EFFECT = "enable_ripple_effect";
 
         /**
+         * Whether to play haptic feedback when touching udfps icon
+         * @hide
+         */
+        public static final String UDFPS_HAPTIC_FEEDBACK = "udfps_haptic_feedback";
+
+        /**
          * Whether the phone vibrates on call connect
          * @hide
          */
