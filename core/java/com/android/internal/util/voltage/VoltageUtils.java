@@ -17,6 +17,11 @@
 package com.android.internal.util.voltage;
 
 import android.content.Context;
+
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.IActivityManager;
+import android.content.DialogInterface;
 import android.content.om.IOverlayManager;
 import android.content.om.OverlayInfo;
 import android.content.pm.PackageInfo;
@@ -27,7 +32,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.input.InputManager;
-import android.provider.Settings;
+import android.os.AsyncTask;
 import android.os.UserHandle;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -42,10 +47,12 @@ import android.util.DisplayMetrics;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import com.android.internal.R;
 
 import com.android.internal.statusbar.IStatusBarService;
 
 import java.util.Locale;
+import java.util.List;
 
 public class VoltageUtils {
 
@@ -257,6 +264,50 @@ public class VoltageUtils {
         public List<OverlayInfo> getOverlayInfosForTarget(String target, int userId)
                 throws RemoteException {
             return mService.getOverlayInfosForTarget(target, userId);
+        }
+    }
+
+    public static void restartSystemUi(Context context) {
+        new RestartSystemUiTask(context).execute();
+    }
+
+    public static void showSystemUiRestartDialog(Context context) {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.systemui_restart_title)
+                .setMessage(R.string.systemui_restart_message)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        restartSystemUi(context);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private static class RestartSystemUiTask extends AsyncTask<Void, Void, Void> {
+        private Context mContext;
+
+        public RestartSystemUiTask(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                ActivityManager am =
+                        (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+                IActivityManager ams = ActivityManager.getService();
+                for (ActivityManager.RunningAppProcessInfo app: am.getRunningAppProcesses()) {
+                    if ("com.android.systemui".equals(app.processName)) {
+                        ams.killApplicationProcess(app.processName, app.uid);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 }
