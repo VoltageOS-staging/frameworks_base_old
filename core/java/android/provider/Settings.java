@@ -5522,13 +5522,6 @@ public final class Settings {
         public static final String SCREENSHOT_SHUTTER_SOUND = "screenshot_shutter_sound";
 
         /**
-         * Whether to hide navbar pill and keyboard space.
-         * Default 0.
-         * @hide
-         */
-        public static final String FULLSCREEN_GESTURES = "fullscreen_gestures";
-
-        /**
          * Whether to allow one finger quick settings expansion on the side of the statusbar.
          * 0 = 0ff, 1 = right, 2 = left, 3 = both
          * @hide
@@ -11436,7 +11429,7 @@ public final class Settings {
 
         /**
          * Gesture navbar length mode.
-         * Supported modes: 0 for normal length, 1 for medium and 2 for long.
+         * Supported modes: 0 for hidden, 1 for normal length, 2 for medium and 3 for long.
          * Default 0.
          * @hide
          */
