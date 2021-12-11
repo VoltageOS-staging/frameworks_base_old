@@ -23,7 +23,6 @@ import android.view.View;
 
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
-import com.android.systemui.plugins.DarkIconDispatcher;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.tuner.TunerService;
@@ -33,18 +32,18 @@ public class ClockController implements TunerService.Tunable {
 
     private static final String TAG = "ClockController";
 
-    private static final String STATUS_BAR_CLOCK =
+    private static final String CLOCK_POSITION =
             "system:" + Settings.System.STATUS_BAR_CLOCK;
 
     private static final int CLOCK_POSITION_RIGHT = 0;
     private static final int CLOCK_POSITION_CENTER = 1;
     private static final int CLOCK_POSITION_LEFT = 2;
-    private static final int CLOCK_POSITION_HIDE = 3;
 
     private Context mContext;
     private Clock mActiveClock, mCenterClock, mLeftClock, mRightClock;
 
     private int mClockPosition = CLOCK_POSITION_LEFT;
+    private boolean mBlackListed = false;
 
     public ClockController(Context context, View statusBar) {
         mContext = context;
@@ -56,60 +55,40 @@ public class ClockController implements TunerService.Tunable {
         mActiveClock = mLeftClock;
 
         Dependency.get(TunerService.class).addTunable(this,
-                STATUS_BAR_CLOCK);
+                StatusBarIconController.ICON_HIDE_LIST, CLOCK_POSITION);
     }
 
     public Clock getClock() {
-        return mActiveClock;
+        switch (mClockPosition) {
+            case CLOCK_POSITION_RIGHT:
+                return mRightClock;
+            case CLOCK_POSITION_CENTER:
+                return mCenterClock;
+            case CLOCK_POSITION_LEFT:
+            default:
+                return mLeftClock;
+        }
     }
 
     private void updateActiveClock() {
-        switch (mClockPosition) {
-            case CLOCK_POSITION_RIGHT:
-                mActiveClock = mRightClock;
-                mLeftClock.setClockVisibleByUser(false);
-                mCenterClock.setClockVisibleByUser(false);
-                mRightClock.setClockVisibleByUser(true);
-                break;
-            case CLOCK_POSITION_CENTER:
-                mActiveClock = mCenterClock;
-                mLeftClock.setClockVisibleByUser(false);
-                mRightClock.setClockVisibleByUser(false);
-                mCenterClock.setClockVisibleByUser(true);
-                break;
-            case CLOCK_POSITION_LEFT:
-            default:
-                mActiveClock = mLeftClock;
-                mCenterClock.setClockVisibleByUser(false);
-                mRightClock.setClockVisibleByUser(false);
-                mLeftClock.setClockVisibleByUser(true);
-                break;
-            case CLOCK_POSITION_HIDE:
-                mActiveClock = null;
-                mLeftClock.setClockVisibleByUser(false);
-                mCenterClock.setClockVisibleByUser(false);
-                mRightClock.setClockVisibleByUser(false);
-                break;
-        }
+        mActiveClock.setClockVisibleByUser(false);
+        mActiveClock = getClock();
+        mActiveClock.setClockVisibleByUser(true);
+
+        // Override any previous setting
+        mActiveClock.setClockVisibleByUser(!mBlackListed);
     }
 
     @Override
     public void onTuningChanged(String key, String newValue) {
-        switch (key) {
-            case STATUS_BAR_CLOCK:
-                mClockPosition = TunerService.parseInteger(newValue, CLOCK_POSITION_LEFT);
-                updateActiveClock();
-                break;
-            default:
-                break;
+        Log.d(TAG, "onTuningChanged key=" + key + " value=" + newValue);
+
+        if (CLOCK_POSITION.equals(key)) {
+            mClockPosition = TunerService.parseInteger(newValue, CLOCK_POSITION_LEFT);
+        } else {
+            mBlackListed = StatusBarIconController.getIconHideList(
+                    mContext, newValue).contains("clock");
         }
-    }
-
-    public void addDarkReceiver() {
-        Dependency.get(DarkIconDispatcher.class).addDarkReceiver(mActiveClock);
-    }
-
-    public void removeDarkReceiver() {
-        Dependency.get(DarkIconDispatcher.class).removeDarkReceiver(mActiveClock);
+        updateActiveClock();
     }
 }
