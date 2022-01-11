@@ -210,5 +210,6 @@ public class SecureSettings {
         Settings.Secure.TETHERING_ALLOW_VPN_UPSTREAMS,
         Settings.Secure.SCREEN_OFF_UDFPS_ENABLED,
         Settings.Secure.DISABLE_SECURE_TILES_ON_LOCKSCREEN,
+        Settings.Secure.SECURE_LOCKSCREEN_QS_DISABLED,
     };
 }
