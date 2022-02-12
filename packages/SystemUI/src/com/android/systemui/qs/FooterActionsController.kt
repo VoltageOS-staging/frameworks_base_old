@@ -150,7 +150,7 @@ internal class FooterActionsController @Inject constructor(
             startServicesActivity()
         } else if (v === powerMenuLite) {
             uiEventLogger.log(GlobalActionsDialogLite.GlobalActionsEvent.GA_OPEN_QS)
-            globalActionsDialog?.showOrHideDialog(false, true, v)
+            globalActionsDialog?.showOrHideDialog(false, true, null)
         }
     }
 

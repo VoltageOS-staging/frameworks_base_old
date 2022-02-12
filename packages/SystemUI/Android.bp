@@ -85,6 +85,7 @@ android_library {
         "res-keyguard",
         "res",
         "res-hwkeys",
+        "res-blur",
     ],
     static_libs: [
         "WifiTrackerLib",
@@ -125,6 +126,7 @@ android_library {
         "dagger2",
         "jsr330",
         "lottie",
+        "AndroidSystemBlur-platform",
     ],
     manifest: "AndroidManifest.xml",
 
