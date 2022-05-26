@@ -291,7 +291,7 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
                 @Override
                 public void triggerBack() {
                     if (mEdgeHapticEnabled) {
-                        vibrateTick();
+                        vibrateBack(true /* Click */);
                     }
                     // Notify FalsingManager that an intentional gesture has occurred.
                     // TODO(b/186519446): use a different method than isFalseTouch
@@ -515,9 +515,10 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
         mIsNavBarShownTransiently = isTransient;
     }
 
-    private void vibrateTick() {
+    private void vibrateBack(boolean light) {
             AsyncTask.execute(() ->
-                    mVibrator.vibrate(VibrationEffect.get(VibrationEffect.EFFECT_TICK)));
+                    mVibrator.vibrate(VibrationEffect.get(light ? VibrationEffect.EFFECT_CLICK :
+                        VibrationEffect.EFFECT_HEAVY_CLICK, true  /* fallback */)));
     }
 
     private void disposeInputChannel() {
@@ -995,7 +996,7 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
                 MotionEvent.ACTION_CANCEL, 0.0f, 0.0f, 0);
         cancelGesture(ev);
         if (mEdgeHapticEnabled) {
-            vibrateTick();
+                vibrateBack(false /* Heavy click */);
         }
     }
 
