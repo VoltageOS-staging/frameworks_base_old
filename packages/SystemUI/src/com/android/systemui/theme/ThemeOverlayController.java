@@ -662,10 +662,7 @@ public class ThemeOverlayController extends CoreStartable implements Dumpable {
             }
         }
 
-        if (colorSchemeIsApplied(managedProfiles)) {
-            Log.d(TAG, "Skipping overlay creation. Theme was already: " + mColorScheme);
-            return;
-        }
+	mNeedsOverlayCreation = true;
 
         if (DEBUG) {
             Log.d(TAG, "Applying overlays: " + categoryToPackage.keySet().stream()
@@ -678,6 +675,7 @@ public class ThemeOverlayController extends CoreStartable implements Dumpable {
         boolean isBlackTheme = mSecureSettings.getInt(Settings.Secure.SYSTEM_BLACK_THEME, 0) == 1
                                 && nightMode;
         mThemeManager.setIsBlackTheme(isBlackTheme);
+        mThemeManager.applyBlackTheme(isBlackTheme);
 
         if (mNeedsOverlayCreation) {
             mNeedsOverlayCreation = false;
@@ -689,7 +687,6 @@ public class ThemeOverlayController extends CoreStartable implements Dumpable {
                     managedProfiles);
         }
 
-        mThemeManager.applyBlackTheme(isBlackTheme);
     }
 
     private final ConfigurationListener mConfigurationListener = new ConfigurationListener() {
