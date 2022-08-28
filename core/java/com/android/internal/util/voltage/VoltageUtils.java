@@ -27,6 +27,7 @@ import android.app.ActivityThread;
 import android.app.AlertDialog;
 import android.app.IActivityManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -67,11 +68,13 @@ import android.net.NetworkInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.view.IWindowManager;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import com.android.internal.R;
 import android.widget.Toast;
+import android.view.WindowManagerGlobal;
 
 import java.util.Locale;
 import java.util.ArrayList;
@@ -88,6 +91,9 @@ import com.android.internal.util.ArrayUtils;
 public class VoltageUtils {
 
     private static OverlayManager mOverlayService;
+
+    public static final String INTENT_SCREENSHOT = "action_take_screenshot";
+    public static final String INTENT_REGION_SCREENSHOT = "action_take_region_screenshot";
 
     public static boolean isChineseLanguage() {
        return Resources.getSystem().getConfiguration().locale.getLanguage().startsWith(
@@ -219,6 +225,20 @@ public class VoltageUtils {
         final IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
         try {
             wm.showGlobalActions();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void takeScreenshot(boolean full) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ie) {
+            // Do nothing
+        }
+        IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
+        try {
+            wm.sendCustomAction(new Intent(full? INTENT_SCREENSHOT : INTENT_REGION_SCREENSHOT));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
