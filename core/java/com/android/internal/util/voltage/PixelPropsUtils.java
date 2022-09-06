@@ -29,8 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PixelPropsUtils {
-    public static final String PACKAGE_GMS = "com.google.android.gms";
-    public static final String PACKAGE_SETTINGS_SERVICES = "com.google.android.settings.intelligence";
+    private static final String PACKAGE_GMS = "com.google.android.gms";
+    private static final String PACKAGE_FINSKY = "com.android.vending";
+    private static final String PACKAGE_SETTINGS_SERVICES = "com.google.android.settings.intelligence";
+    private static final String PROCESS_UNSTABLE = "com.google.android.gms.unstable";
 
     private static final String DEVICE = "ro.voltage.device";
     private static final String TAG = PixelPropsUtils.class.getSimpleName();
@@ -47,7 +49,6 @@ public class PixelPropsUtils {
     private static final Map<String, ArrayList<String>> propsToKeep;
 
     private static final String[] packagesToChangePixel6Pro = {
-            PACKAGE_GMS,
             "com.google.android.inputmethod.latin",
             "com.samsung.accessory",
             "com.samsung.accessory.fridaymgr",
@@ -63,7 +64,6 @@ public class PixelPropsUtils {
 
     private static final String[] extraPackagesToChange = {
             "com.android.chrome",
-            "com.android.vending",
             "com.breel.wallpapers20",
             "com.nhs.online.nhsonline"
     };
@@ -135,6 +135,7 @@ public class PixelPropsUtils {
     };
 
     private static volatile boolean sIsGms = false;
+    private static volatile boolean sIsFinsky = false;
 
     static {
         propsToKeep = new HashMap<>();
@@ -185,6 +186,10 @@ public class PixelPropsUtils {
         if (packageName == null || (Arrays.asList(packagesToKeep).contains(packageName)) || isPixelDevice) {
             return;
         }
+        if (packageName.equals(PACKAGE_FINSKY)) {
+            sIsFinsky = true;
+            spoofBuildGms();
+        }
         if (packageName.startsWith("com.google.")
                 || Arrays.asList(extraPackagesToChange).contains(packageName)) {
             if (packageName.equals("com.google.android.apps.photos")) {
@@ -192,6 +197,12 @@ public class PixelPropsUtils {
                     propsToChange.putAll(propsToChangePixelXL);
                 } else {
                     propsToChange.putAll(propsToChangePixel5);
+                }
+            } else if (packageName.equals(PACKAGE_GMS)) {
+                final String processName = Application.getProcessName();
+                if (processName.equals("com.google.android.gms.unstable")) {
+                    sIsGms = true;
+                    spoofBuildGms();
                 }
             } else {
                 if ((Arrays.asList(packagesToChangePixel6Pro).contains(packageName))
@@ -214,20 +225,6 @@ public class PixelPropsUtils {
                 if (DEBUG)
                     Log.d(TAG, "Defining " + key + " prop for: " + packageName);
                 setPropValue(key, value);
-            }
-            if (packageName.equals(PACKAGE_GMS)) {
-                final String processName = Application.getProcessName();
-                if (processName.equals("com.google.android.gms.unstable")) {
-                    sIsGms = true;
-                }
-            }
-            if (isPixelDevice) {
-                if (packageName.equals(PACKAGE_GMS)) {
-                    final String processName = Application.getProcessName();
-                    if (processName.equals("com.google.android.gms.unstable")) {
-                        setPropValue("MODEL", Build.MODEL + " ");
-                    }
-                }
             }
             // Set proper indexing fingerprint
             if (packageName.equals(PACKAGE_SETTINGS_SERVICES)) {
@@ -285,6 +282,12 @@ public class PixelPropsUtils {
         }
     }
 
+    private static void spoofBuildGms() {
+        // Alter model name to avoid hardware attestation enforcement
+        setPropValue("MODEL", Build.MODEL + " ");
+        setPropValue("FINGERPRINT", "google/angler/angler:6.0/MDB08L/2343525:user/release-keys");
+    }
+
     private static boolean isCallerSafetyNet() {
         return Arrays.stream(Thread.currentThread().getStackTrace())
                 .anyMatch(elem -> elem.getClassName().contains("DroidGuard"));
@@ -293,6 +296,11 @@ public class PixelPropsUtils {
     public static void onEngineGetCertificateChain() {
         // Check stack for SafetyNet
         if (sIsGms && isCallerSafetyNet()) {
+            throw new UnsupportedOperationException();
+        }
+
+        // Check stack for PlayIntegrity
+        if (sIsFinsky) {
             throw new UnsupportedOperationException();
         }
     }
