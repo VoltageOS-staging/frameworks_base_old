@@ -97,5 +97,6 @@ public class SystemSettings {
         Settings.System.NAVIGATION_BAR_INVERSE,
         Settings.System.TORCH_POWER_BUTTON_GESTURE,
         Settings.System.LOCKSCREEN_BATTERY_INFO,
+        Settings.System.VOLUME_BUTTON_MUSIC_CONTROL,
     };
 }
