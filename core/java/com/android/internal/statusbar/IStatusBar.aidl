@@ -328,4 +328,6 @@ oneway interface IStatusBar
 
     /** VOS */
     void toggleCameraFlash();
+    void killForegroundApp();
+
 }
