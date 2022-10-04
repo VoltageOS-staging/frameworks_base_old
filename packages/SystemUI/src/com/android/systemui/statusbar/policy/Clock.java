@@ -17,9 +17,7 @@
 package com.android.systemui.statusbar.policy;
 
 import android.app.ActivityManager;
-import android.app.ActivityTaskManager;
 import android.app.StatusBarManager;
-import android.app.TaskStackListener;
 import android.app.WindowConfiguration;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -56,6 +54,7 @@ import com.android.systemui.plugins.DarkIconDispatcher;
 import com.android.systemui.plugins.DarkIconDispatcher.DarkReceiver;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
+import com.android.systemui.shared.system.TaskStackChangeListener;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener;
 import com.android.systemui.tuner.TunerService;
@@ -113,7 +112,7 @@ public class Clock extends TextView implements
     private boolean mClockVisibleByPolicy = true;
     private boolean mClockVisibleByUser = getVisibility() == View.VISIBLE;
     private boolean mClockAutoHideLauncher = false;
-    private TaskStackListener mTaskStackListener;
+    private TaskStackListenerImpl mTaskStackListener = null;
 
     private boolean mAttached;
     private boolean mScreenReceiverRegistered;
@@ -306,29 +305,10 @@ public class Clock extends TextView implements
 
     private void handleTaskStackListener(boolean register) {
         if (register && mTaskStackListener == null) {
-            mTaskStackListener = new TaskStackListener() {
-                @Override
-                public void onTaskStackChanged() {
-                    updateShowClock();
-                }
-
-                @Override
-                public void onTaskRemoved(int taskId) {
-                    updateShowClock();
-                }
-
-                @Override
-                public void onTaskMovedToFront(int taskId) {
-                    updateShowClock();
-                }
-            };
-            try {
-                ActivityTaskManager.getService().registerTaskStackListener(mTaskStackListener);
-            } catch (Exception e) {}
+            mTaskStackListener = new TaskStackListenerImpl();
+            ActivityManagerWrapper.getInstance().registerTaskStackListener(mTaskStackListener);
         } else if (!register && mTaskStackListener != null) {
-            try {
-                ActivityTaskManager.getService().unregisterTaskStackListener(mTaskStackListener);
-            } catch (Exception e) {}
+            ActivityManagerWrapper.getInstance().unregisterTaskStackListener(mTaskStackListener);
             mTaskStackListener = null;
         }
     }
@@ -769,5 +749,22 @@ public class Clock extends TextView implements
             mSecondsHandler.postAtTime(this, SystemClock.uptimeMillis() / 1000 * 1000 + 1000);
         }
     };
+
+    private class TaskStackListenerImpl implements TaskStackChangeListener {
+        @Override
+        public void onTaskStackChanged() {
+            updateShowClock();
+        }
+
+        @Override
+        public void onTaskRemoved(int taskId) {
+            updateShowClock();
+        }
+
+        @Override
+        public void onTaskMovedToFront(int taskId) {
+            updateShowClock();
+        }
+    }
 }
 
