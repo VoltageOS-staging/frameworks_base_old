@@ -11999,13 +11999,6 @@ public final class Settings {
          */
         public static final String SLEEP_MODE_RINGER_MODE = "sleep_mode_ringer_mode";
 
-	/**
-         * Whether to disable secure qs tiles on lockscreen.
-         * Default 1
-         * @hide
-         */
-        public static final String DISABLE_SECURE_TILES_ON_LOCKSCREEN = "disable_secure_tiles_on_lockscreen";
-
         /**
          * Whether to disable qs on secure lockscreen.
          * Default 0
