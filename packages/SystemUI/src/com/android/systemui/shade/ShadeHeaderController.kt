@@ -306,6 +306,7 @@ constructor(
             batteryIcon.setBatteryStyle(batteryStyle)
         }
         batteryIcon.setBatteryPercent(qsBatteryPercent)
+        updateBatteryResources(true)
     }
 
     override fun onInit() {
@@ -365,13 +366,12 @@ constructor(
             v.pivotY = v.height.toFloat() / 2
         }
         clock.setOnClickListener { launchClockActivity() }
+        clock.setQsHeader()
         batteryIcon.setOnClickListener {
             activityStarter.postStartActivityDismissingKeyguard(
                 Intent(Intent.ACTION_POWER_USAGE_SUMMARY), 0
             )
         }
-
-        clock.setQsHeader()
 
         dumpManager.registerDumpable(this)
         configurationController.addCallback(configurationControllerListener)
@@ -565,11 +565,19 @@ constructor(
 
         val fillColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary)
         iconManager.setTint(fillColor)
+        updateBatteryResources(false)
+    }
+
+    private fun updateBatteryResources(forceUpdate: Boolean) {
         val textColor = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary)
         val colorStateList = Utils.getColorAttr(context, android.R.attr.textColorPrimary)
-        if (textColor != textColorPrimary) {
-            val textColorSecondary = Utils.getColorAttrDefaultColor(context,
+        if (textColor != textColorPrimary || forceUpdate) {
+            var textColorSecondary = Utils.getColorAttrDefaultColor(context,
                     android.R.attr.textColorSecondary)
+            val currentBatteryStyle = batteryIcon.getBatteryStyle()
+            if (currentBatteryStyle == 1 || currentBatteryStyle == 2 || currentBatteryStyle == 3) {
+                textColorSecondary = Utils.getColorAttrDefaultColor(header.context, android.R.attr.textColorHint)
+            }
             textColorPrimary = textColor
             if (iconManager != null) {
                 iconManager.setTint(textColor)
