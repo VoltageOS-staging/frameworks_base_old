@@ -6865,4 +6865,6 @@
 
     <!-- Whether the media player is shown on the quick settings -->
     <bool name="config_quickSettingsShowMediaPlayer">true</bool>
+
+    <string name="config_gnssPsdsType"></string>
 </resources>
