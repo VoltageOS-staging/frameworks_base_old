@@ -1792,6 +1792,7 @@ public abstract class PackageManager {
     @IntDef(flag = true, value = {
             DONT_KILL_APP,
             SYNCHRONOUS,
+            SKIP_IF_MISSING,
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface EnabledFlags {}
@@ -1832,6 +1833,9 @@ public abstract class PackageManager {
     @SystemApi
     @FlaggedApi(android.content.pm.Flags.FLAG_QUARANTINED_ENABLED)
     public static final int FLAG_SUSPEND_QUARANTINED = 0x00000001;
+
+    /** @hide */
+    public static final int SKIP_IF_MISSING = 0x4000_0000;
 
     /** @hide */
     @IntDef(prefix = { "INSTALL_REASON_" }, value = {

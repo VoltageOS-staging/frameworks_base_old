@@ -17,6 +17,7 @@
 package android.app;
 
 import android.annotation.FlaggedApi;
+import android.Manifest;
 import android.annotation.IntDef;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
@@ -32,6 +33,7 @@ import android.app.Notification.Builder;
 import android.app.compat.CompatChanges;
 import android.compat.annotation.ChangeId;
 import android.compat.annotation.EnabledSince;
+import android.app.compat.gms.GmsCompat;
 import android.compat.annotation.UnsupportedAppUsage;
 import android.content.ComponentName;
 import android.content.Context;
@@ -60,6 +62,8 @@ import android.service.notification.ZenModeConfig;
 import android.service.notification.ZenPolicy;
 import android.util.Log;
 import android.util.proto.ProtoOutputStream;
+
+import com.android.internal.gmscompat.GmsCompatApp;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -714,6 +718,17 @@ public class NotificationManager {
     @UnsupportedAppUsage
     public void notifyAsUser(String tag, int id, Notification notification, UserHandle user)
     {
+        if (GmsCompat.isEnabled()) {
+            if (!GmsCompat.hasPermission(Manifest.permission.POST_NOTIFICATIONS)) {
+                String pkg = GmsCompat.appContext().getPackageName();
+                try {
+                    GmsCompatApp.iGms2Gca().showMissingPostNotifsPermissionNotification(pkg);
+                } catch (RemoteException e) {
+                    GmsCompatApp.callFailed(e);
+                }
+            }
+        }
+
         INotificationManager service = getService();
         String pkg = mContext.getPackageName();
 

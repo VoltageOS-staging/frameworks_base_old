@@ -123,6 +123,7 @@ import com.android.internal.pm.split.SplitAssetDependencyLoader;
 import com.android.internal.pm.split.SplitAssetLoader;
 import com.android.internal.util.ArrayUtils;
 import com.android.internal.util.XmlUtils;
+import com.android.server.ext.GmsSysServerHooks;
 
 import libcore.io.IoUtils;
 import libcore.util.EmptyArray;
@@ -2339,6 +2340,8 @@ public class ParsingPackageUtils {
 
             pkg.addActivity(a.getResult());
         }
+
+        GmsSysServerHooks.amendParsedPackage(pkg);
 
         if (hasActivityOrder) {
             pkg.sortActivities();
