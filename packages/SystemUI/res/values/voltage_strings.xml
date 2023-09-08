@@ -223,4 +223,8 @@
     <!-- Name of the firewall status bar icon. -->
     <string name="status_bar_firewall">Firewall</string>
     <string name="status_bar_firewall_slot" translatable="false">firewall</string>
+
+    <!-- Screen record -->
+    <string name="screenrecord_keep_screen_awake_label">Stay awake</string>
+    <string name="screenrecord_keep_screen_awake_summary">Keep the screen on</string>
 </resources>
