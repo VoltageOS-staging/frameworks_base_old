@@ -202,4 +202,6 @@
         Use with extreme caution. -->
   <string-array name="config_appLockAllowedSystemApps" translatable="false" />
 
+    <!-- Whether Pixel props is enabled -->
+    <bool name="config_enablePixelProps">true</bool>
 </resources>

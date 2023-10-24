@@ -60,6 +60,8 @@ public class PixelPropsUtils {
 
     private static final String[] sCertifiedProps =
             Resources.getSystem().getStringArray(R.array.config_certifiedBuildProperties);
+    private static final Boolean sEnablePixelProps =
+            Resources.getSystem().getBoolean(R.bool.config_enablePixelProps);
 
     private static final Map<String, Object> propsToChangeGeneric;
     private static final Map<String, Object> propsToChangePixel8Pro;
@@ -272,6 +274,11 @@ public class PixelPropsUtils {
     }
 
     public static void setProps(Context context) {
+        if (!sEnablePixelProps) {
+            dlog("Pixel props is disabled by config");
+            return;
+        }
+
         final String packageName = context.getPackageName();
         final String processName = Application.getProcessName();
 
