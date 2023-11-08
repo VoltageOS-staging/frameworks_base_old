@@ -272,6 +272,9 @@ public class SystemNotificationChannels {
                     NotificationManager.IMPORTANCE_HIGH, true, dest);
         channel(ctx, EXPLOIT_PROTECTION, R.string.notif_channel_exploit_protection,
             NotificationManager.IMPORTANCE_HIGH, true, dest);
+
+        channel(ctx, EXPLOIT_PROTECTION, R.string.notif_channel_exploit_protection,
+            NotificationManager.IMPORTANCE_HIGH, true, dest);
     }
 
     private static NotificationChannel channel(Context ctx, String id, int nameRes, int importance, boolean silent, List<NotificationChannel> dest) {
