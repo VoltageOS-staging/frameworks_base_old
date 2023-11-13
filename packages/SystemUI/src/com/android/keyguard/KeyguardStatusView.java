@@ -189,17 +189,6 @@ public class KeyguardStatusView extends GridLayout implements
         }
     }
 
-    public void updateWeatherView() {
-        if (mWeatherView != null) {
-            if (mShowWeather && mOmniStyle && mKeyguardSlice.getVisibility() == View.VISIBLE) {
-                mWeatherView.setVisibility(View.VISIBLE);
-                mWeatherView.enableUpdates();
-            } else if (!mShowWeather || !mOmniStyle) {
-                mWeatherView.setVisibility(View.GONE);
-                mWeatherView.disableUpdates();
-            }
-        }
-
     @Override
     protected boolean onSetAlpha(int alpha) {
         mDrawAlpha = alpha;
@@ -214,5 +203,17 @@ public class KeyguardStatusView extends GridLayout implements
                     super.dispatchDraw(c);
                     return kotlin.Unit.INSTANCE;
                 });
+        }
+
+    public void updateWeatherView() {
+        if (mWeatherView != null) {
+            if (mShowWeather && mOmniStyle && mKeyguardSlice.getVisibility() == View.VISIBLE) {
+                mWeatherView.setVisibility(View.VISIBLE);
+                mWeatherView.enableUpdates();
+            } else if (!mShowWeather || !mOmniStyle) {
+                mWeatherView.setVisibility(View.GONE);
+                mWeatherView.disableUpdates();
+            }
+        }
     }
 }

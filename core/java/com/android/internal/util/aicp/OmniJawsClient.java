@@ -543,7 +543,8 @@ public class OmniJawsClient {
             IntentFilter filter = new IntentFilter();
             filter.addAction(WEATHER_UPDATE);
             filter.addAction(WEATHER_ERROR);
-            mContext.registerReceiver(mReceiver, filter);
+            if (DEBUG) Log.d(TAG, "registerReceiver");
+            mContext.registerReceiver(mReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
         }
         mObserver.add(observer);
     }
@@ -552,6 +553,7 @@ public class OmniJawsClient {
         mObserver.remove(observer);
         if (mObserver.size() == 0 && mReceiver != null) {
             try {
+                if (DEBUG) Log.d(TAG, "unregisterReceiver");
                 mContext.unregisterReceiver(mReceiver);
             } catch (Exception e) {
             }
