@@ -30,6 +30,8 @@ public final class SystemServerExt {
         SystemServerExt sse = new SystemServerExt(systemContext, pm);
         sse.bgHandler.post(sse::initBgThread);
         com.android.server.policy.keyguard.UsbPortSecurityHooks.init(systemContext);
+
+        AppCompatConf.init(systemContext);
     }
 
     void initBgThread() {
