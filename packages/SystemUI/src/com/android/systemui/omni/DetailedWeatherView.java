@@ -81,6 +81,8 @@ public class DetailedWeatherView extends FrameLayout {
     private TextView mForecastText4;
     private ActivityStarter mActivityStarter;
     private OmniJawsClient mWeatherClient;
+    private boolean mWithBackgroundColor;
+    private boolean mShowCurrent = true;
     private View mCurrentView;
     private TextView mCurrentTemp;
     private TextView mCurrentText;
@@ -90,6 +92,12 @@ public class DetailedWeatherView extends FrameLayout {
     private ImageView mEmptyViewImage;
     private View mWeatherLine;
     private TextView mProviderName;
+
+    /** The background colors of the app, it changes thru out the day to mimic the sky. **/
+    public static final String[] BACKGROUND_SPECTRUM = { "#212121", "#27232e", "#2d253a",
+            "#332847", "#382a53", "#3e2c5f", "#442e6c", "#393a7a", "#2e4687", "#235395", "#185fa2",
+            "#0d6baf", "#0277bd", "#0d6cb1", "#1861a6", "#23569b", "#2d4a8f", "#383f84", "#433478",
+            "#3d3169", "#382e5b", "#322b4d", "#2c273e", "#272430" };
 
     public DetailedWeatherView(Context context) {
         this(context, null);
@@ -143,6 +151,10 @@ public class DetailedWeatherView extends FrameLayout {
         mWeatherLine = findViewById(R.id.current_weather);
         mProviderName = (TextView) findViewById(R.id.current_weather_provider);
 
+        if (!mShowCurrent) {
+            mCurrentView.setVisibility(View.GONE);
+        }
+
         mEmptyViewImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -190,8 +202,14 @@ public class DetailedWeatherView extends FrameLayout {
         String format = DateFormat.is24HourFormat(mContext) ? "HH:mm" : "hh:mm a";
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         mWeatherTimestamp.setText(getResources().getString(R.string.omnijaws_service_last_update) + " " + sdf.format(timeStamp));
-        mWeatherData.setText(weatherData.windSpeed + " " + weatherData.windUnits + " " + weatherData.pinWheel +" - " +
-                weatherData.humidity);
+        if (mShowCurrent) {
+            mWeatherData.setText(weatherData.windSpeed + " " + weatherData.windUnits + " " + weatherData.pinWheel +" - " +
+                    weatherData.humidity);
+        } else {
+            mWeatherData.setText(weatherData.temp + weatherData.tempUnits + " - " +
+                    weatherData.windSpeed + " " + weatherData.windUnits + " " + weatherData.pinWheel +" - " +
+                    weatherData.humidity);
+        }
 
         sdf = new SimpleDateFormat("EE");
         Calendar cal = Calendar.getInstance();
@@ -244,12 +262,17 @@ public class DetailedWeatherView extends FrameLayout {
                 weatherData.forecasts.get(4).high, weatherData.tempUnits));
         mForecastText4.setText(dayShort);
 
-        d = overlay(mContext.getResources(), mWeatherClient.getWeatherConditionImage(
-                weatherData.conditionCode));
-        mCurrentImage.setImageDrawable(d);
-        mCurrentTemp.setText(formatTempString(weatherData.temp, null, weatherData.tempUnits));
-        mCurrentText.setText(mContext.getResources().getText(R.string.omnijaws_current_text));
+        if (mShowCurrent) {
+            d = overlay(mContext.getResources(), mWeatherClient.getWeatherConditionImage(
+                    weatherData.conditionCode));
+            mCurrentImage.setImageDrawable(d);
+            mCurrentTemp.setText(formatTempString(weatherData.temp, null, weatherData.tempUnits));
+            mCurrentText.setText(mContext.getResources().getText(R.string.omnijaws_current_text));
+        }
 
+        if (mWithBackgroundColor) {
+            setBackgroundColor(getCurrentHourColor());
+        }
     }
 
     private Drawable overlay(Resources resources, Drawable image) {
@@ -285,6 +308,11 @@ public class DetailedWeatherView extends FrameLayout {
 
     private void forceRefreshWeatherSettings() {
         mWeatherClient.updateWeather();
+    }
+
+    public static int getCurrentHourColor() {
+        final int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        return Color.parseColor(BACKGROUND_SPECTRUM[hourOfDay]);
     }
 
     private void setErrorView() {
