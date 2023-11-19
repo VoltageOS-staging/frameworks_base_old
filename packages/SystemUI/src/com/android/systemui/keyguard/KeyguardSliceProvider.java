@@ -73,7 +73,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import com.android.internal.util.aicp.OmniJawsClient;
+import com.android.systemui.omni.OmniJawsClient;
 
 /**
  * Simple Slice provider that shows the current date.
