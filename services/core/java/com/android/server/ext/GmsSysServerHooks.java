@@ -38,6 +38,8 @@ import static com.android.server.ext.PackageManagerHooks.removeUsesPermissions;
 
 public class GmsSysServerHooks {
 
+    private static String OMINJAWS_PACKAGE = "org.omnirom.omnijaws";
+    
     // ParsingPackageUtils#parseBaseApplication
     public static void amendParsedPackage(ParsingPackage pkg) {
         fixupPermissions(pkg);
@@ -62,7 +64,7 @@ public class GmsSysServerHooks {
             for (String perm : perms) {
                 pkg.addUsesPermission(new ParsedUsesPermissionImpl(perm, 0));
             }
-        } else if (GmsInfo.PACKAGE_GSF.equals(pkgName)) {
+        } else if (GmsInfo.PACKAGE_GSF.equals(pkgName) || OMINJAWS_PACKAGE.equals(pkgName)) {
             List<ParsedPermission> perms = pkg.getPermissions();
             for (int i = 0, m = perms.size(); i < m; ++i) {
                 var p = perms.get(i);
