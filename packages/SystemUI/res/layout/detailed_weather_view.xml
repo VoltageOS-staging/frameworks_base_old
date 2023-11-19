@@ -77,16 +77,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:paddingBottom="8dp"
                     android:scaleType="centerInside"/>
-
-                <TextView
-                    android:id="@+id/current_temp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Weather.Detailed"
-                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/current_text"
@@ -109,16 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:paddingBottom="8dp"
                     android:scaleType="centerInside"/>
-
-                <TextView
-                    android:id="@+id/forecast_temp_0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Weather.Detailed"
-                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/forecast_text_0"
@@ -141,16 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:paddingBottom="8dp"
                     android:scaleType="centerInside"/>
-
-                <TextView
-                    android:id="@+id/forecast_temp_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Weather.Detailed"
-                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/forecast_text_1"
@@ -173,16 +146,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:paddingBottom="8dp"
                     android:scaleType="centerInside"/>
-
-                <TextView
-                    android:id="@+id/forecast_temp_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Weather.Detailed"
-                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/forecast_text_2"
@@ -205,16 +169,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:paddingBottom="8dp"
                     android:scaleType="centerInside"/>
-
-               <TextView
-                    android:id="@+id/forecast_temp_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Weather.Detailed"
-                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/forecast_text_3"
@@ -237,16 +192,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:paddingBottom="8dp"
                     android:scaleType="centerInside"/>
-
-                <TextView
-                    android:id="@+id/forecast_temp_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Weather.Detailed"
-                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/forecast_text_4"
