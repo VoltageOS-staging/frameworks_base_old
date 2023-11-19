@@ -103,6 +103,5 @@ public class SystemSettings {
         Settings.System.LOCK_HIDE_STATUS_BAR,
         Settings.System.NAVIGATION_BAR_IME_SPACE,
         Settings.System.OMNIJAWS_WEATHER_ICON_PACK,
-        Settings.System.OMNI_LOCKSCREEN_WEATHER_ENABLED,
     };
 }
