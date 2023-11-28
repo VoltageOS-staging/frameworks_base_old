@@ -20,26 +20,8 @@ import static com.android.systemui.statusbar.phone.CentralSurfaces.DEBUG_MEDIA_F
 import static com.android.systemui.statusbar.phone.CentralSurfaces.ENABLE_LOCKSCREEN_WALLPAPER;
 import static com.android.systemui.statusbar.phone.CentralSurfaces.SHOW_LOCKSCREEN_MEDIA_ARTWORK;
 
-import static android.provider.Settings.System.LOCKSCREEN_MEDIA_METADATA;
-import static android.provider.Settings.System.LOCKSCREEN_ALBUMART_FILTER;
-import static android.provider.Settings.System.LS_MEDIA_FILTER_BLUR_RADIUS;
-import static android.provider.Settings.System.LS_MEDIA_ARTWORK_FADE_PERCENT;
-
 // Album art feature start
-import android.content.ContentResolver;
-import android.content.res.Resources;
-import android.os.UserHandle;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.RenderEffect;
-import android.graphics.Shader;
 import android.provider.Settings;
-
-import com.android.systemui.R;
-
-import androidx.core.content.ContextCompat;
-import com.android.internal.util.android.ImageHelper;
-import com.android.internal.graphics.ColorUtils;
 // Album art feature end
 
 import android.annotation.MainThread;
@@ -48,7 +30,6 @@ import android.annotation.Nullable;
 import android.app.Notification;
 import android.app.WallpaperManager;
 import android.content.Context;
-import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
@@ -60,12 +41,8 @@ import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Looper;
-import android.os.Handler;
 import android.os.Trace;
-import android.os.UserHandle;
 import android.service.notification.NotificationStats;
 import android.service.notification.StatusBarNotification;
 import android.util.ArraySet;
@@ -76,7 +53,6 @@ import android.widget.ImageView;
 
 import com.android.app.animation.Interpolators;
 import com.android.internal.annotations.VisibleForTesting;
-import com.android.systemui.Dependency;
 import com.android.systemui.Dumpable;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.dagger.qualifiers.Main;
@@ -99,6 +75,7 @@ import com.android.systemui.statusbar.phone.LockscreenWallpaper;
 import com.android.systemui.statusbar.phone.ScrimController;
 import com.android.systemui.statusbar.phone.ScrimState;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
+import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.Utils;
 import com.android.systemui.util.concurrency.DelayableExecutor;
 
@@ -121,21 +98,16 @@ import dagger.Lazy;
  * Handles tasks and state related to media notifications. For example, there is a 'current' media
  * notification, which this class keeps track of.
  */
-public class NotificationMediaManager implements Dumpable {
+public class NotificationMediaManager implements Dumpable, TunerService.Tunable {
     private static final String TAG = "NotificationMediaManager";
     public static final boolean DEBUG_MEDIA = false;
 
-    public static final Uri LOCKSCREEN_MEDIA_METADATA_URI =
-            Settings.System.getUriFor(LOCKSCREEN_MEDIA_METADATA);
-    public static final Uri LOCKSCREEN_ALBUMART_FILTER_URI =
-            Settings.System.getUriFor(LOCKSCREEN_ALBUMART_FILTER);
-    public static final Uri LS_MEDIA_FILTER_BLUR_RADIUS_URI =
-            Settings.System.getUriFor(LS_MEDIA_FILTER_BLUR_RADIUS);
-    public static final Uri LS_MEDIA_ARTWORK_FADE_PERCENT_URI =
-            Settings.System.getUriFor(LS_MEDIA_ARTWORK_FADE_PERCENT);
+    private static final String LOCKSCREEN_MEDIA_METADATA =
+            "system:" + Settings.System.LOCKSCREEN_MEDIA_METADATA;
 
     private final StatusBarStateController mStatusBarStateController;
     private final SysuiColorExtractor mColorExtractor;
+    private final TunerService mTunerService;
     private final KeyguardStateController mKeyguardStateController;
     private final KeyguardBypassController mKeyguardBypassController;
     private static final HashSet<Integer> PAUSED_MEDIA_STATES = new HashSet<>();
@@ -190,14 +162,8 @@ public class NotificationMediaManager implements Dumpable {
     private Display mCurrentDisplay;
 
     private LockscreenWallpaper.WallpaperDrawable mWallapperDrawable;
-    
-    private SettingsObserver mSettingsObserver;
 
     private boolean mShowMediaMetadata;
-    private int mAlbumArtFilter;
-    private int mFadeLevel;
-    private float mLSBlurRadius;
-    private RenderEffect blurEffect;
 
     private final MediaController.Callback mMediaListener = new MediaController.Callback() {
         @Override
@@ -245,7 +211,8 @@ public class NotificationMediaManager implements Dumpable {
             KeyguardStateController keyguardStateController,
             DumpManager dumpManager,
             WallpaperManager wallpaperManager,
-            DisplayManager displayManager) {
+            DisplayManager displayManager,
+            TunerService tunerService) {
         mContext = context;
         mMediaArtworkProcessor = mediaArtworkProcessor;
         mKeyguardBypassController = keyguardBypassController;
@@ -268,41 +235,15 @@ public class NotificationMediaManager implements Dumpable {
 
         dumpManager.registerDumpable(this);
 
-        mSettingsObserver = new SettingsObserver(new Handler());
-        mSettingsObserver.observe();
+        mTunerService = tunerService;
+        mTunerService.addTunable(this, LOCKSCREEN_MEDIA_METADATA);
     }
 
-    class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-        void observe() {
-            mContext.getContentResolver().registerContentObserver(LOCKSCREEN_MEDIA_METADATA_URI, false, this,
-                    UserHandle.USER_ALL);
-            mContext.getContentResolver().registerContentObserver(LOCKSCREEN_ALBUMART_FILTER_URI, false, this,
-                    UserHandle.USER_ALL);
-            mContext.getContentResolver().registerContentObserver(LS_MEDIA_FILTER_BLUR_RADIUS_URI, false, this,
-                    UserHandle.USER_ALL);
-            mContext.getContentResolver().registerContentObserver(LS_MEDIA_ARTWORK_FADE_PERCENT_URI, false, this,
-                    UserHandle.USER_ALL);
-            updateMediaArtSettings();
-        }
-        void updateMediaArtSettings() {
-             mShowMediaMetadata = getSettingsValue(Settings.System.LOCKSCREEN_MEDIA_METADATA) != 0;
-             mAlbumArtFilter = getSettingsValue(Settings.System.LOCKSCREEN_ALBUMART_FILTER);
-             mLSBlurRadius = (float) getSettingsValue(Settings.System.LS_MEDIA_FILTER_BLUR_RADIUS);
-             mFadeLevel = getSettingsValue(Settings.System.LS_MEDIA_ARTWORK_FADE_PERCENT);
-             dispatchUpdateMediaMetaData(false /* changed */, true /* allowAnimation */);
-        }
-        int getSettingsValue(String key) {
-            return Settings.System.getIntForUser(
-                    mContext.getContentResolver(),
-                    key,
-                    0, UserHandle.USER_CURRENT);
-        }
-        @Override
-        public void onChange(boolean selfChange) {
-            updateMediaArtSettings();
+    @Override
+    public void onTuningChanged(String key, String newValue) {
+        if (LOCKSCREEN_MEDIA_METADATA.equals(key)) {
+            mShowMediaMetadata = TunerService.parseIntegerSwitch(newValue, false);
+            dispatchUpdateMediaMetaData(false /* changed */, true /* allowAnimation */);
         }
     }
 
@@ -689,20 +630,7 @@ public class NotificationMediaManager implements Dumpable {
         // set media artwork as lockscreen wallpaper if player is playing
         if (bmp != null && (mShowMediaMetadata || !ENABLE_LOCKSCREEN_WALLPAPER) &&
                 PlaybackState.STATE_PLAYING == getMediaControllerPlaybackState(mMediaController)) {
-            Resources resources = mBackdropBack.getResources();
-            switch (mAlbumArtFilter) {
-                case 1:
-                    artworkDrawable = new BitmapDrawable(resources, ImageHelper.toGrayscale(bmp));
-                    break;
-                case 2:
-                    Drawable aw = new BitmapDrawable(resources, bmp);
-                    Bitmap coloredBitmap = ImageHelper.getColoredBitmap(aw, ContextCompat.getColor(mContext, R.color.accent_device_default_light));
-                    artworkDrawable = new BitmapDrawable(resources, coloredBitmap);
-                    break;
-                default:
-                    artworkDrawable = new BitmapDrawable(resources, bmp);
-                    break;
-            }
+            artworkDrawable = new BitmapDrawable(mBackdropBack.getResources(), bmp);
         }
         boolean hasMediaArtwork = artworkDrawable != null;
         boolean allowWhenShade = false;
@@ -777,14 +705,6 @@ public class NotificationMediaManager implements Dumpable {
                                 (LockscreenWallpaper.WallpaperDrawable) artworkDrawable;
                     }
                     mBackdropBack.setImageDrawable(artworkDrawable);
-                }
-
-                if (mAlbumArtFilter >= 3) {
-                    mBackdropBack.setRenderEffect(blurEffect);
-                }
-                if (mFadeLevel != 0) {
-                    final int fadeFilter = ColorUtils.blendARGB(Color.TRANSPARENT, Color.BLACK, mFadeLevel / 100f);
-                    mBackdropBack.setColorFilter(fadeFilter, PorterDuff.Mode.SRC_ATOP);
                 }
 
                 if (mBackdropFront.getVisibility() == View.VISIBLE) {
