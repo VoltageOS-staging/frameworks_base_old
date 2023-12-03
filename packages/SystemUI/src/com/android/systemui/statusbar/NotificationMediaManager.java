@@ -132,6 +132,9 @@ public class NotificationMediaManager implements Dumpable {
     private static final String ISLAND_NOTIFICATION =
             "system:island_notification";
 
+    private static final String ISLAND_NOWPLAYING =
+            "system:" + Settings.System.ISLAND_NOWPLAYING;
+
     private final StatusBarStateController mStatusBarStateController;
     private final SysuiColorExtractor mColorExtractor;
     private final KeyguardStateController mKeyguardStateController;
@@ -284,7 +287,7 @@ public class NotificationMediaManager implements Dumpable {
             LOCKSCREEN_ALBUMART_FILTER,
             LS_MEDIA_FILTER_BLUR_RADIUS,
             LS_MEDIA_ARTWORK_FADE_PERCENT,
-            ISLAND_NOTIFICATION);
+            ISLAND_NOWPLAYING);
     }
 
     private final TunerService.Tunable mTunable = new TunerService.Tunable() {
@@ -311,7 +314,7 @@ public class NotificationMediaManager implements Dumpable {
                             TunerService.parseInteger(newValue, 30);
                     dispatchUpdateMediaMetaData(false /* changed */, true /* allowAnimation */);
                     break;
-                case ISLAND_NOTIFICATION:
+                case ISLAND_NOWPLAYING:
                     mIslandEnabled = TunerService.parseIntegerSwitch(newValue, true);
                     break;
                 default:
