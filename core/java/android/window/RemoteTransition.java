@@ -145,7 +145,6 @@ public class RemoteTransition implements Parcelable {
      */
     @DataClass.Generated.Member
     public @NonNull RemoteTransition setDebugName(@NonNull String value) {
-        mDebugName = value;
         return this;
     }
 
