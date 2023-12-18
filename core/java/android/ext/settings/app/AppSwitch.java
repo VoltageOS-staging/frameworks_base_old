@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.GosPackageState;
 import android.content.pm.GosPackageStateBase;
+import android.ext.AppInfoExt;
+import android.ext.settings.ExtSettings;
 
 /** @hide */
 public abstract class AppSwitch {
