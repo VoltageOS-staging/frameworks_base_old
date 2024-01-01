@@ -4,7 +4,6 @@ import android.ext.AppInfoExt;
 import android.ext.PackageId;
 import android.os.Parcel;
 
-import com.android.server.os.nano.AppCompatProtos;
 import com.android.server.pm.parsing.pkg.PackageImpl;
 
 public class PackageExt {
@@ -30,16 +29,8 @@ public class PackageExt {
     }
 
     public AppInfoExt toAppInfoExt(PackageImpl pkg) {
-        AppCompatProtos.CompatConfig compatConfig = pkg.getAppCompatConfig();
 
-        if (this == DEFAULT && compatConfig == null) {
-            return AppInfoExt.DEFAULT;
-        }
-
-        long compatChanges = compatConfig != null ?
-                compatConfig.compatChanges | AppInfoExt.HAS_COMPAT_CHANGES : 0L;
-
-        return new AppInfoExt(packageId, flags, compatChanges);
+        return new AppInfoExt(packageId, flags);
     }
 
     public void writeToParcel(Parcel dest) {
