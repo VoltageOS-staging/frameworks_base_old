@@ -50,7 +50,7 @@ class AppLockHideAppPC(
         }
     }
 
-    override fun getAvailabilityStatus() = AVAILABLE
+    override fun getAvailabilityStatus() = AVAILABLE_UNSEARCHABLE
 
     override fun isChecked() = hideFromLauncher
 

@@ -77,7 +77,7 @@ class AppLockSettingsPreferenceController(
 
     override fun getAvailabilityStatus() =
         if (lockPatternUtils.isSecure(UserHandle.myUserId()))
-            AVAILABLE
+            AVAILABLE_UNSEARCHABLE
         else
             DISABLED_DEPENDENT_SETTING
 

@@ -46,4 +46,6 @@ abstract class AppLockTogglePreferenceController(
     }
 
     override fun getSliceHighlightMenuRes() = R.string.menu_key_security
+
+    override fun getAvailabilityStatus() = AVAILABLE_UNSEARCHABLE
 }
