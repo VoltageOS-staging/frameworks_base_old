@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2019-2023 crDroid Android Project
+ * Copyright (C) 2019-2024 crDroid Android Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import android.net.TrafficStats;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.text.Spanned;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -42,8 +41,10 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.TextView;
 
+import lineageos.providers.LineageSettings;
+
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
+import com.android.systemui.res.R;
 import com.android.systemui.tuner.TunerService;
 
 import java.text.DecimalFormat;
@@ -74,19 +75,19 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
     private static final int Giga = Mega * Kilo;
 
     private static final String NETWORK_TRAFFIC_LOCATION =
-            "system:" + Settings.System.NETWORK_TRAFFIC_LOCATION;
+            "lineagesecure:" + LineageSettings.Secure.NETWORK_TRAFFIC_LOCATION;
     private static final String NETWORK_TRAFFIC_MODE =
-            "system:" + Settings.System.NETWORK_TRAFFIC_MODE;
+            "lineagesecure:" + LineageSettings.Secure.NETWORK_TRAFFIC_MODE;
     private static final String NETWORK_TRAFFIC_AUTOHIDE =
-            "system:" + Settings.System.NETWORK_TRAFFIC_AUTOHIDE;
+            "lineagesecure:" + LineageSettings.Secure.NETWORK_TRAFFIC_AUTOHIDE;
     private static final String NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD =
-            "system:" + Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD;
+            "lineagesecure:" + LineageSettings.Secure.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD;
     private static final String NETWORK_TRAFFIC_UNITS =
-            "system:" + Settings.System.NETWORK_TRAFFIC_UNITS;
+            "lineagesecure:" + LineageSettings.Secure.NETWORK_TRAFFIC_UNITS;
     private static final String NETWORK_TRAFFIC_REFRESH_INTERVAL =
-            "system:" + Settings.System.NETWORK_TRAFFIC_REFRESH_INTERVAL;
+            "lineagesecure:" + LineageSettings.Secure.NETWORK_TRAFFIC_REFRESH_INTERVAL;
     private static final String NETWORK_TRAFFIC_HIDEARROW =
-            "system:" + Settings.System.NETWORK_TRAFFIC_HIDEARROW;
+            "lineagesecure:" + LineageSettings.Secure.NETWORK_TRAFFIC_HIDEARROW;
 
     protected int mLocation = LOCATION_DISABLED;
     private int mMode = MODE_UPSTREAM_AND_DOWNSTREAM;
@@ -321,6 +322,49 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
         };
     }
 
+    // Network tracking related variables
+    private NetworkRequest mRequest = new NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
+            .build();
+
+    private ConnectivityManager.NetworkCallback mNetworkCallback =
+            new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onLinkPropertiesChanged(Network network,
+                        LinkProperties linkProperties) {
+                    if (mTrafficHandler != null) {
+                        Message msg = new Message();
+                        msg.what = MESSAGE_TYPE_ADD_NETWORK;
+                        msg.obj = new LinkPropertiesHolder(network, linkProperties);
+                        mTrafficHandler.sendMessage(msg);
+                    }
+                }
+
+                @Override
+                public void onLost(Network network) {
+                    if (mTrafficHandler != null) {
+                        Message msg = new Message();
+                        msg.what = MESSAGE_TYPE_REMOVE_NETWORK;
+                        msg.obj = network;
+                        mTrafficHandler.sendMessage(msg);
+                    }
+                }
+            };
+
+    private ConnectivityManager.NetworkCallback mDefaultNetworkCallback =
+            new ConnectivityManager.NetworkCallback() {
+        @Override
+        public void onAvailable(Network network) {
+            updateViews();
+        }
+
+        @Override
+        public void onLost(Network network) {
+            updateViews();
+        }
+    };
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -336,49 +380,8 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
             tunerService.addTunable(this, NETWORK_TRAFFIC_REFRESH_INTERVAL);
             tunerService.addTunable(this, NETWORK_TRAFFIC_HIDEARROW);
 
-            // Network tracking related variables
-            final NetworkRequest request = new NetworkRequest.Builder()
-                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
-                    .build();
-            ConnectivityManager.NetworkCallback networkCallback =
-                    new ConnectivityManager.NetworkCallback() {
-                        @Override
-                        public void onLinkPropertiesChanged(Network network,
-                                LinkProperties linkProperties) {
-                            Message msg = new Message();
-                            msg.what = MESSAGE_TYPE_ADD_NETWORK;
-                            msg.obj = new LinkPropertiesHolder(network, linkProperties);
-                            mTrafficHandler.sendMessage(msg);
-                        }
-
-                        @Override
-                        public void onLost(Network network) {
-                            Message msg = new Message();
-                            msg.what = MESSAGE_TYPE_REMOVE_NETWORK;
-                            msg.obj = network;
-                            mTrafficHandler.sendMessage(msg);
-                        }
-                    };
-            ConnectivityManager.NetworkCallback defaultNetworkCallback =
-                    new ConnectivityManager.NetworkCallback() {
-                @Override
-                public void onAvailable(Network network) {
-                    updateViews();
-                }
-
-                @Override
-                public void onLost(Network network) {
-                    updateViews();
-                }
-            };
-
-            try {
-                mConnectivityManager.registerNetworkCallback(request, networkCallback);
-                mConnectivityManager.registerDefaultNetworkCallback(defaultNetworkCallback);
-            } catch (Exception e) {
-                // Do nothing
-            }
+            mConnectivityManager.registerNetworkCallback(mRequest, mNetworkCallback);
+            mConnectivityManager.registerDefaultNetworkCallback(mDefaultNetworkCallback);
 
             mConnectionAvailable = mConnectivityManager.getActiveNetworkInfo() != null;
 
@@ -396,6 +399,7 @@ public class NetworkTraffic extends TextView implements TunerService.Tunable {
         if (mAttached) {
             clearHandlerCallbacks();
             mContext.unregisterReceiver(mIntentReceiver);
+            mConnectivityManager.unregisterNetworkCallback(mNetworkCallback);
             Dependency.get(TunerService.class).removeTunable(this);
             mAttached = false;
         }
