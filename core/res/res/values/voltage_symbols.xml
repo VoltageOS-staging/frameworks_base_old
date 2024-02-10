@@ -219,9 +219,6 @@
     <!-- Whether device has Google Tensor SoC -->
     <java-symbol type="bool" name="config_hasTensorSoC" />
 
-    <!-- Spoof GMS as Pixel Tablet -->
-    <java-symbol type="bool" name="config_spoofasTablet" />
-
     <!-- Notification light mappings -->
     <java-symbol type="array" name="notification_light_package_mapping" />
     <!-- On-device lights (LED) capabilities -->
