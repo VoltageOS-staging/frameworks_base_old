@@ -70,7 +70,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import com.android.internal.util.voltage.AttestationHooks;
 import com.android.internal.util.voltage.GamesPropsUtils;
 import com.android.internal.util.voltage.PixelPropsUtils;
 
@@ -1289,7 +1288,6 @@ public class Instrumentation {
         Application app = getFactory(context.getPackageName())
                 .instantiateApplication(cl, className);
         app.attach(context);
-        AttestationHooks.setProps(context);
         GamesPropsUtils.setProps(context);
         PixelPropsUtils.setProps(context);
         return app;
@@ -1310,7 +1308,6 @@ public class Instrumentation {
         GmsCompat.maybeEnable(context);
         Application app = (Application)clazz.newInstance();
         app.attach(context);
-        AttestationHooks.setProps(context);
         GamesPropsUtils.setProps(context);
         PixelPropsUtils.setProps(context);
         return app;
