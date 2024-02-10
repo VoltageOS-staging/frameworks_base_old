@@ -56,7 +56,6 @@ public class PixelPropsUtils {
     private static final String PACKAGE_SI = "com.google.android.settings.intelligence";
     private static final String PACKAGE_VELVET = "com.google.android.googlequicksearchbox";
     private static final String SAMSUNG = "com.samsung.";
-    private static final String SPOOF_CTS = "persist.sys.velvet.cts";
     private static final String SPOOF_MUSIC_APPS = "persist.sys.disguise_props_for_music_app";
     private static final String SPOOF_PIF = "persist.sys.pif";
     private static final String SPOOF_PIXEL_PROPS = "persist.sys.pixelprops";
@@ -80,6 +79,7 @@ public class PixelPropsUtils {
 
     // Packages to Spoof as the most recent Pixel device
     private static final String[] packagesToChangeRecentPixel = {
+            PACKAGE_VELVET,
             "com.amazon.avod.thirdpartyclient",
             "com.android.chrome",
             "com.breel.wallpapers20",
@@ -122,7 +122,6 @@ public class PixelPropsUtils {
             "com.google.android.as",
             "com.google.android.dialer",
             "com.google.android.euicc",
-            "com.google.android.googlequicksearchbox",
             "com.google.android.setupwizard",
             "com.google.android.youtube",
             "com.google.ar.core",
@@ -215,13 +214,11 @@ public class PixelPropsUtils {
     private static boolean shouldTryToCertifyDevice() {
         final String processName = Application.getProcessName();
         if (!processName.toLowerCase().contains("unstable")
+                && !processName.toLowerCase().contains("chimera")
                 && !processName.toLowerCase().contains("pixelmigrate")
                 && !processName.toLowerCase().contains("instrumentation")) {
             return false;
         }
-
-        setPropValue("TIME", System.currentTimeMillis());
-
         final boolean was = isGmsAddAccountActivityOnTop();
         final String reason = "GmsAddAccountActivityOnTop";
         if (!was) {
@@ -347,15 +344,11 @@ public class PixelPropsUtils {
             }
         }
         if (Arrays.asList(packagesToKeep).contains(packageName)) {
-            if (SystemProperties.getBoolean(SPOOF_CTS, false) &&
-                    packageName.equals(PACKAGE_VELVET)) {
-                propsToChange.putAll(propsToChangeRecentPixel);
-            }
             return;
         }
-
         if (sIsGms) {
             if (shouldTryToCertifyDevice()) {
+                setPropValue("TIME", System.currentTimeMillis());
                 if (!SystemProperties.getBoolean(SPOOF_PIF, true)) {
                     dlog("PIF is disabled by system prop");
                     return;
@@ -364,14 +357,19 @@ public class PixelPropsUtils {
                     spoofBuildGms(context);
                 }
             }
-        } else if (packageName.equals(PACKAGE_GMS)) {
-            setPropValue("TIME", System.currentTimeMillis());
         } else if (packageName.startsWith("com.google.") ||
                 packageName.startsWith(SAMSUNG) ||
                 Arrays.asList(packagesToChangeRecentPixel).contains(packageName)) {
 
             if (!sEnablePixelProps || !SystemProperties.getBoolean(SPOOF_PIXEL_PROPS, true)) {
                 dlog("Pixel props is disabled by config or system prop");
+                return;
+            } else if (processName.toLowerCase().contains("ui")
+                    && processName.toLowerCase().contains("gservice")
+                    && processName.toLowerCase().contains("gapps")
+                    && processName.toLowerCase().contains("learning")
+                    && processName.toLowerCase().contains("search")
+                    && processName.toLowerCase().contains("persistent")) {
                 return;
             } else if (SystemProperties.getBoolean(SPOOF_PIXEL_RECENT, true) &&
                     Arrays.asList(packagesToChangeRecentPixel).contains(packageName)) {
