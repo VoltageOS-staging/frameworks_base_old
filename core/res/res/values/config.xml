@@ -6867,4 +6867,7 @@
     <bool name="config_quickSettingsShowMediaPlayer">true</bool>
 
     <string name="config_gnssPsdsType"></string>
+
+    <bool name="config_usbPortSecuritySupported">false</bool>
+    <java-symbol type="bool" name="config_usbPortSecuritySupported" />
 </resources>
