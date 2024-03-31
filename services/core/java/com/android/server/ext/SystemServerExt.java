@@ -34,9 +34,6 @@ public final class SystemServerExt {
 
     void initBgThread() {
         WifiAutoOff.maybeInit(this);
-
-        if (packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH, 0)) {
-            new BluetoothAutoOff(this);
-        }
+        BluetoothAutoOff.maybeInit(this);
     }
 }
