@@ -84,20 +84,11 @@ switch (pkg) {
 
 switch (pkg) {
     case GmsInfo.PACKAGE_GMS_CORE:
-        GmsCompatConfig gmsCoreConfig = GmsHooks.config();
-        if (gmsCoreConfig != null) {
-            params.maxAllowedVersion = gmsCoreConfig.maxGmsCoreVersion;
-        } else {
-            params.maxAllowedVersion = 99999999999L; // Set a default value
-        }
+                params.maxAllowedVersion = GmsHooks.config().maxGmsCoreVersion;
         break;
     case GmsInfo.PACKAGE_PLAY_STORE:
         GmsCompatConfig playStoreConfig = GmsHooks.config();
-        if (playStoreConfig != null) {
-            params.maxAllowedVersion = playStoreConfig.maxPlayStoreVersion;
-        } else {
-            params.maxAllowedVersion = 99999999999L; // Set a default value
-        }
+                params.maxAllowedVersion = GmsHooks.config().maxPlayStoreVersion;
         break;
         }
     }
