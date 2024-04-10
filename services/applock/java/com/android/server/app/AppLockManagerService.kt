@@ -198,7 +198,7 @@ class AppLockManagerService(
                             }
                             alarmsMutex.withLock {
                                 scheduledAlarms.remove(packageName)?.let {
-                                    alarmManager.cancel(it)
+                                    alarmManager?.cancel(it)
                                 }
                             }
                             unlockedPackages.remove(packageName)
@@ -938,7 +938,7 @@ class AppLockManagerService(
                 }
                 return false
             }
-            isDeviceSecure = keyguardManager.isDeviceSecure(userId)
+	isDeviceSecure = keyguardManager?.isDeviceSecure(userId) ?: false
             if (!isDeviceSecure) {
                 logD {
                     "Device is not secure, app does not require unlock"

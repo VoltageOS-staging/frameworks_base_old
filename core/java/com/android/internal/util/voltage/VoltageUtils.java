@@ -23,6 +23,8 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.IActivityManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -70,6 +72,7 @@ import android.view.Surface;
 import com.android.internal.R;
 import com.android.internal.statusbar.IStatusBarService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
