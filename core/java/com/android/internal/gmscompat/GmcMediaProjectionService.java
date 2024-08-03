@@ -46,42 +46,48 @@ public class GmcMediaProjectionService extends Service {
         appContext().stopService(intent());
     }
 
-@Override
-public int onStartCommand(Intent intent, int flags, int startId) {
-    Log.d(TAG, "onStartCommand " + intent);
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand " + intent);
 
-    Notification n;
-    try {
-        IGms2Gca gms2Gca = GmsCompatApp.iGms2Gca();
-        if (gms2Gca != null) {
-            n = gms2Gca.getMediaProjectionNotification();
-        } else {
-            Log.e(TAG, "iGms2Gca is null, unable to get media projection notification");
-            return START_NOT_STICKY;
+        // Ensure startForeground() is called as soon as possible
+        Notification n;
+        try {
+            IGms2Gca gms2Gca = GmsCompatApp.iGms2Gca();
+            if (gms2Gca != null) {
+                n = gms2Gca.getMediaProjectionNotification();
+            } else {
+                Log.e(TAG, "iGms2Gca is null, unable to get media projection notification");
+                stopSelf();
+                return START_NOT_STICKY;
+            }
+        } catch (RemoteException e) {
+            throw GmsCompatApp.callFailed(e);
         }
-    } catch (RemoteException e) {
-        throw GmsCompatApp.callFailed(e);
+
+        startForeground(GmsCoreConst.NOTIF_ID_MEDIA_PROJECTION_SERVICE, n);
+
+        String id = intent.getIdentifier();
+        CountDownLatch latch;
+
+        synchronized (latches) {
+            latch = latches.remove(id);
+        }
+        if (latch != null) {
+            latch.countDown();
+        } else {
+            Log.e(TAG, "missing latch");
+        }
+
+        return START_NOT_STICKY;
     }
 
-    startForeground(GmsCoreConst.NOTIF_ID_MEDIA_PROJECTION_SERVICE, n);
-
-    String id = intent.getIdentifier();
-    CountDownLatch latch;
-
-    synchronized (latches) {
-        latch = latches.remove(id);
-    }
-    if (latch != null) {
-        latch.countDown();
-    } else {
-        Log.e(TAG, "missing latch");
-    }
-
-    return START_NOT_STICKY;
-}
     private static Intent intent() {
         return new Intent(appContext(), GmcMediaProjectionService.class);
     }
 
-    @Override public IBinder onBind(Intent intent) { return null; }
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 }
