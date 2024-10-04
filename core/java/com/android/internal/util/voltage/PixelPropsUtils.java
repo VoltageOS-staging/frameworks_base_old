@@ -181,12 +181,12 @@ public final class PixelPropsUtils {
         propsToChangeRecentPixel = new HashMap<>();
         propsToChangeRecentPixel.put("BRAND", "google");
         propsToChangeRecentPixel.put("MANUFACTURER", "Google");
-        propsToChangeRecentPixel.put("DEVICE", "caiman");
-        propsToChangeRecentPixel.put("PRODUCT", "caiman");
-        propsToChangeRecentPixel.put("HARDWARE", "caiman");
-        propsToChangeRecentPixel.put("MODEL", "Pixel 9 Pro");
+        propsToChangeRecentPixel.put("DEVICE", "komodo");
+        propsToChangeRecentPixel.put("PRODUCT", "komodo");
+        propsToChangeRecentPixel.put("HARDWARE", "komodo");
+        propsToChangeRecentPixel.put("MODEL", "Pixel 9 Pro XL");
         propsToChangeRecentPixel.put("ID", "AD1A.240905.004");
-        propsToChangeRecentPixel.put("FINGERPRINT", "google/caiman/caiman:14/AD1A.240905.004/12196292:user/release-keys");
+        propsToChangeRecentPixel.put("FINGERPRINT", "google/komodo/komodo:14/AD1A.240905.004/12196292:user/release-keys");
         propsToChangePixelTablet = new HashMap<>();
         propsToChangePixelTablet.put("BRAND", "google");
         propsToChangePixelTablet.put("MANUFACTURER", "Google");
